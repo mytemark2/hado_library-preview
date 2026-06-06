@@ -77,39 +77,39 @@ jobs:
           if [ -f app/HADO_DEV_INFO.json ]; then
             cp app/HADO_DEV_INFO.json site/HADO_DEV_INFO.json
             DEV_LABEL="$(python - <<'PY'
-import json
-with open('app/HADO_DEV_INFO.json', encoding='utf-8') as f:
-    data=json.load(f)
-print(data.get('displayVersion') or 'development preview')
-PY
-)"
+          import json
+          with open('app/HADO_DEV_INFO.json', encoding='utf-8') as f:
+              data=json.load(f)
+          print(data.get('displayVersion') or 'development preview')
+          PY
+          )"
           fi
 
           python - <<'PY'
-from pathlib import Path
-import html
-import json
-p=Path('site/index.html')
-s=p.read_text(encoding='utf-8')
-label='development preview'
-info=Path('app/HADO_DEV_INFO.json')
-if info.exists():
-    label=json.loads(info.read_text(encoding='utf-8')).get('displayVersion') or label
-safe=html.escape(label)
-style='''<style id="hado-preview-style">#hadoPreviewBanner{position:sticky;top:0;z-index:999999;background:#7c2d12;color:#fff;padding:8px 12px;font-weight:700;text-align:center;letter-spacing:.02em;box-shadow:0 2px 6px rgba(0,0,0,.18)}</style>'''
-banner=f'<div id="hadoPreviewBanner">Preview: {safe}</div>'
-if '</head>' in s and 'hado-preview-style' not in s:
-    s=s.replace('</head>', style+'</head>', 1)
-if '<body' in s and 'hadoPreviewBanner' not in s:
-    pos=s.find('>', s.find('<body'))+1
-    s=s[:pos]+banner+s[pos:]
-if '<title>' in s:
-    start=s.find('<title>')+7
-    end=s.find('</title>', start)
-    if end!=-1:
-        s=s[:start]+f'覇道ライブラリ {safe} [Preview]'+s[end:]
-p.write_text(s, encoding='utf-8')
-PY
+          from pathlib import Path
+          import html
+          import json
+          p=Path('site/index.html')
+          s=p.read_text(encoding='utf-8')
+          label='development preview'
+          info=Path('app/HADO_DEV_INFO.json')
+          if info.exists():
+              label=json.loads(info.read_text(encoding='utf-8')).get('displayVersion') or label
+          safe=html.escape(label)
+          style='''<style id="hado-preview-style">#hadoPreviewBanner{position:sticky;top:0;z-index:999999;background:#7c2d12;color:#fff;padding:8px 12px;font-weight:700;text-align:center;letter-spacing:.02em;box-shadow:0 2px 6px rgba(0,0,0,.18)}</style>'''
+          banner=f'<div id="hadoPreviewBanner">Preview: {safe}</div>'
+          if '</head>' in s and 'hado-preview-style' not in s:
+              s=s.replace('</head>', style+'</head>', 1)
+          if '<body' in s and 'hadoPreviewBanner' not in s:
+              pos=s.find('>', s.find('<body'))+1
+              s=s[:pos]+banner+s[pos:]
+          if '<title>' in s:
+              start=s.find('<title>')+7
+              end=s.find('</title>', start)
+              if end!=-1:
+                  s=s[:start]+f'覇道ライブラリ {safe} [Preview]'+s[end:]
+          p.write_text(s, encoding='utf-8')
+          PY
 
           printf '%s\n' "Preview source: mytemark2/hado_library@${APP_REF}" > site/PREVIEW_SOURCE.txt
           printf '%s\n' "Preview label: ${DEV_LABEL}" >> site/PREVIEW_SOURCE.txt
