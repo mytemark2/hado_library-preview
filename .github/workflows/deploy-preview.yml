@@ -1,0 +1,59 @@
+name: Deploy Hado Library Preview
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy-preview.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout app development branch
+        uses: actions/checkout@v4
+        with:
+          repository: mytemark2/hado_library
+          ref: feature/app-3.0.0.0
+          path: app
+
+      - name: Build preview artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site
+          cp app/index.html site/index.html
+          find app -maxdepth 1 -type f -name 'hadou_*.json' -exec cp {} site/ \;
+          if [ -f app/RELEASE_MANIFEST.json ]; then cp app/RELEASE_MANIFEST.json site/; fi
+          printf '%s\n' 'Preview source: mytemark2/hado_library@feature/app-3.0.0.0' > site/PREVIEW_SOURCE.txt
+          printf '%s\n' "Generated at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> site/PREVIEW_SOURCE.txt
+          test -f site/index.html
+          test "$(find site -maxdepth 1 -type f -name 'hadou_*.json' | wc -l)" -gt 0
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
