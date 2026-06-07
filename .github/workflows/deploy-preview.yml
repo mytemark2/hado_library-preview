@@ -68,9 +68,11 @@ jobs:
           APP_REF: ${{ steps.source.outputs.app_ref }}
         run: |
           set -euo pipefail
+          rm -rf site
           mkdir -p site
           cp app/index.html site/index.html
           find app -maxdepth 1 -type f -name 'hadou_*.json' -exec cp {} site/ \;
+          find app -maxdepth 1 -type f -name 'hado_*.js' -exec cp {} site/ \;
           if [ -f app/RELEASE_MANIFEST.json ]; then cp app/RELEASE_MANIFEST.json site/; fi
 
           DEV_LABEL="development preview"
@@ -89,6 +91,7 @@ jobs:
           from pathlib import Path
           import html
           import json
+          import re
           p=Path('site/index.html')
           s=p.read_text(encoding='utf-8')
           label='development preview'
@@ -109,6 +112,17 @@ jobs:
               if end!=-1:
                   s=s[:start]+f'覇道ライブラリ {safe} [Preview]'+s[end:]
           p.write_text(s, encoding='utf-8')
+
+          missing=[]
+          for src in re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', s):
+              src=src.split('?',1)[0].split('#',1)[0]
+              if src.startswith(('http://','https://','//')):
+                  continue
+              rel=src[2:] if src.startswith('./') else src.lstrip('/')
+              if rel and not Path('site', rel).is_file():
+                  missing.append(rel)
+          if missing:
+              raise SystemExit('Missing local script assets: ' + ', '.join(sorted(set(missing))))
           PY
 
           printf '%s\n' "Preview source: mytemark2/hado_library@${APP_REF}" > site/PREVIEW_SOURCE.txt
@@ -116,6 +130,7 @@ jobs:
           printf '%s\n' "Generated at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> site/PREVIEW_SOURCE.txt
           test -f site/index.html
           test "$(find site -maxdepth 1 -type f -name 'hadou_*.json' | wc -l)" -gt 0
+          test "$(find site -maxdepth 1 -type f -name 'hado_*.js' | wc -l)" -gt 0
           grep -q 'hadoPreviewBanner' site/index.html
 
       - name: Configure Pages
