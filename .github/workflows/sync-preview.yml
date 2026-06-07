@@ -62,3 +62,5 @@ jobs:
           SOURCE_SHA="$(cat PREVIEW_SOURCE_COMMIT.txt)"
           git commit -m "sync preview from feature/app-3.0.0.0: ${SOURCE_SHA}"
           git push
+
+# Updating this workflow file intentionally bootstraps one immediate sync.
