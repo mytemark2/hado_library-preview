@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "releaseStatus": "development",
+  "releaseVersion": "3.0.0.0",
+  "updateNo": "04",
+  "revision": 1,
+  "displayVersion": "3.0.0.0 Update04.1",
+  "baseAppVersion": "2.9.6.5",
+  "summary": "Update04.1: add selected-type role candidate browser for nine roles. Candidate display only; no auto placement and no formation save mutation.",
+  "updatedAt": "2026-06-07T08:20:54+09:00"
+}

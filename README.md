@@ -1,9 +1,15 @@
-# 覇道ライブラリ Preview
+# 覇道ライブラリ
 
-このリポジトリは、`mytemark2/hado_library` の開発ブランチを GitHub Pages で確認するための専用サイトです。
+三国志覇道の情報を検索・確認するための個人開発Webアプリです。
 
-- 正式サイト: `https://mytemark2.github.io/hado_library/`
-- プレビューサイト: `https://mytemark2.github.io/hado_library-preview/`
-- 取得元ブランチ: `feature/app-3.0.0.0`
+## 公開アプリ
 
-正式版の `main` とは分離して運用します。
+GitHub Pagesで公開予定です。
+
+## License
+
+個人的かつ非営利の目的に限り、複製、利用、自分用の改修を許可します。
+
+商用利用、再配布、改修版の公開は禁止します。
+
+詳細は [LICENSE](./LICENSE) を参照してください。
