@@ -1,0 +1,63 @@
+name: Sync preview from app development branch
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sync-preview.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hado-library-preview-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview repository
+        uses: actions/checkout@v4
+
+      - name: Pull development branch and replace preview assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC_DIR="$(mktemp -d)"
+          trap 'rm -rf "$SRC_DIR"' EXIT
+
+          git clone --depth 1 --branch feature/app-3.0.0.0 \
+            https://github.com/mytemark2/hado_library.git "$SRC_DIR"
+          SOURCE_SHA="$(git -C "$SRC_DIR" rev-parse HEAD)"
+
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'docs/' \
+            --exclude 'report/' \
+            --exclude 'src/' \
+            --exclude 'tools/' \
+            "$SRC_DIR/" ./
+
+          touch .nojekyll
+          printf '%s\n' "$SOURCE_SHA" > PREVIEW_SOURCE_COMMIT.txt
+
+      - name: Commit preview only when assets changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No preview changes."
+            exit 0
+          fi
+          SOURCE_SHA="$(cat PREVIEW_SOURCE_COMMIT.txt)"
+          git commit -m "sync preview from feature/app-3.0.0.0: ${SOURCE_SHA}"
+          git push
