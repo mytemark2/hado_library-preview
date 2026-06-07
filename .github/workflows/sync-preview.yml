@@ -2,8 +2,9 @@ name: Sync preview from app development branch
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/5 * * * *"
+  repository_dispatch:
+    types:
+      - sync_app_preview
   push:
     branches:
       - main
