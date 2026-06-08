@@ -9,6 +9,7 @@ on:
         default: ""
   repository_dispatch:
     types:
+      - sync_app_preview
       - app_branch_updated
   push:
     branches:
