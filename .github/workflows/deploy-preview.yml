@@ -7,8 +7,9 @@ on:
         description: "Optional app branch/ref. Leave blank to deploy the latest feature/app-x.y.z.w branch."
         required: false
         default: ""
-  schedule:
-    - cron: "*/5 * * * *"
+  repository_dispatch:
+    types:
+      - app_branch_updated
   push:
     branches:
       - main
@@ -36,9 +37,12 @@ jobs:
         shell: bash
         env:
           INPUT_APP_REF: ${{ github.event.inputs.app_ref || '' }}
+          DISPATCH_APP_REF: ${{ github.event.client_payload.app_ref || '' }}
         run: |
           set -euo pipefail
-          if [ -n "${INPUT_APP_REF}" ]; then
+          if [ -n "${DISPATCH_APP_REF}" ]; then
+            APP_REF="${DISPATCH_APP_REF}"
+          elif [ -n "${INPUT_APP_REF}" ]; then
             APP_REF="${INPUT_APP_REF}"
           else
             APP_REF="$(
@@ -84,7 +88,7 @@ jobs:
               data=json.load(f)
           print(data.get('displayVersion') or 'development preview')
           PY
-          )"
+            )"
           fi
 
           python - <<'PY'
