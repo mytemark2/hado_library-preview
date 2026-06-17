@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
-  "generatedAt": "2026-06-14T06:09:45.870Z",
-  "dataSetId": "2026-06-07T06:04:52.951Z",
+  "generatedAt": "2026-06-07T06:04:52.977Z",
+  "dataSetId": "2026-06-07T04:23:26.720Z",
   "crawlerVersion": "1.1.0.0",
   "generator": "hado_crawler_extension",
   "sourceFiles": [
@@ -35,7 +35,7 @@
   "sourceCounts": {
     "generals": 476,
     "tactics": 455,
-    "equipments": 238,
+    "equipments": 237,
     "skills": 620,
     "statusEffects": 200,
     "siegeWeapons": 6,
@@ -49,7 +49,7 @@
   "sourceHashes": {
     "generals": "4c9aa0cb",
     "tactics": "a9afed3e",
-    "equipments": "5960e367",
+    "equipments": "4e60d216",
     "skills": "bee67c33",
     "statusEffects": "dcfa0de6",
     "formations": "9c5d2dae",
@@ -63,7 +63,7 @@
   "sourceSha256": {
     "generals": "4c9aa0cb",
     "tactics": "a9afed3e",
-    "equipments": "5960e367",
+    "equipments": "4e60d216",
     "skills": "bee67c33",
     "statusEffects": "dcfa0de6",
     "formations": "9c5d2dae",
@@ -77,9 +77,9 @@
   "kind": "status_effect_group_owner_index",
   "qualityAudit": {
     "groupCount": 6,
-    "totalOwnerCount": 6042,
-    "ownerRelationCount": 6042,
-    "distinctOwnerCount": 2412,
+    "totalOwnerCount": 6019,
+    "ownerRelationCount": 6019,
+    "distinctOwnerCount": 2410,
     "countRecalculatedAfterRelatedLinkRebuild": true,
     "relatedLinkOwnerEnriched": true,
     "rebuildFromRelatedLinkIndex": true,
@@ -2754,26 +2754,8 @@
             "displayName": "LR張角（ちょうかく）",
             "source": "related_link_index",
             "sourcePartType": "semantic-owner-parameter",
-            "statusEffectName": "会心発生変化(強化)",
-            "matchedText": "会心発生率を50％"
-          },
-          {
-            "category": "generals",
-            "name": "LR張角（ちょうかく）",
-            "displayName": "LR張角（ちょうかく）",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-parameter",
             "statusEffectName": "与ダメージ変化(強化)",
             "matchedText": "与ダメージ+30%"
-          },
-          {
-            "category": "generals",
-            "name": "LR張角（ちょうかく）",
-            "displayName": "LR張角（ちょうかく）",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-parameter",
-            "statusEffectName": "被ダメージ変化(強化)",
-            "matchedText": "被ダメージ-30%"
           },
           {
             "category": "generals",
@@ -24925,15 +24907,6 @@
             "displayName": "黄老",
             "source": "related_link_index",
             "sourcePartType": "semantic-owner-parameter",
-            "statusEffectName": "攻撃速度変化(強化)",
-            "matchedText": "攻撃速度+100%"
-          },
-          {
-            "category": "skills",
-            "name": "黄老",
-            "displayName": "黄老",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-parameter",
             "statusEffectName": "与ダメージ変化(強化)",
             "matchedText": "与ダメージ+30%"
           },
@@ -24943,26 +24916,8 @@
             "displayName": "黄老",
             "source": "related_link_index",
             "sourcePartType": "semantic-owner-parameter",
-            "statusEffectName": "被ダメージ変化(強化)",
-            "matchedText": "被ダメージ₋30%"
-          },
-          {
-            "category": "skills",
-            "name": "黄老",
-            "displayName": "黄老",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-parameter",
             "statusEffectName": "知力変化(強化)",
             "matchedText": "知力+15%"
-          },
-          {
-            "category": "skills",
-            "name": "黄老",
-            "displayName": "黄老",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-status-grant",
-            "statusEffectName": "威槍",
-            "matchedText": "威槍"
           },
           {
             "category": "skills",
@@ -30180,45 +30135,9 @@
             "name": "天雷",
             "displayName": "天雷",
             "source": "related_link_index",
-            "sourcePartType": "critical-rate-half-pseudo",
-            "statusEffectName": "会心発生変化(強化)",
-            "matchedText": "会心率半減"
-          },
-          {
-            "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-parameter",
-            "statusEffectName": "会心発生変化(強化)",
-            "matchedText": "会心発生率を50％"
-          },
-          {
-            "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-parameter",
-            "statusEffectName": "被ダメージ変化(強化)",
-            "matchedText": "被ダメージを軽減（知力500"
-          },
-          {
-            "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
             "sourcePartType": "semantic-owner-parameter",
             "statusEffectName": "知力変化(強化)",
             "matchedText": "知力を200％"
-          },
-          {
-            "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-status-grant",
-            "statusEffectName": "威槍",
-            "matchedText": "威槍"
           },
           {
             "category": "skills",
@@ -33656,15 +33575,15 @@
       },
       "sourceRefs": [],
       "ownerCounts": {
-        "generals": 1689,
+        "generals": 1687,
         "tactics": 983,
-        "skills": 1048,
+        "skills": 1041,
         "equipments": 8,
         "statusEffects": 0
       },
-      "totalOwnerCount": 3728,
+      "totalOwnerCount": 3719,
       "source": "related_link_index",
-      "ownerRelationCount": 3728,
+      "ownerRelationCount": 3719,
       "distinctOwnerCount": 1250
     },
     {
@@ -36194,42 +36113,6 @@
             "sourcePartType": "semantic-owner-status-grant",
             "statusEffectName": "取込",
             "matchedText": "取込"
-          },
-          {
-            "category": "generals",
-            "name": "LR張角（ちょうかく）",
-            "displayName": "LR張角（ちょうかく）",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "知力低下回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）を避ける"
-          },
-          {
-            "category": "generals",
-            "name": "LR張角（ちょうかく）",
-            "displayName": "LR張角（ちょうかく）",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "攻撃速度低下回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）を避ける"
-          },
-          {
-            "category": "generals",
-            "name": "LR張角（ちょうかく）",
-            "displayName": "LR張角（ちょうかく）",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "会心率半減回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）と一部の不利変化（会心率半減/通常攻撃縮小）を避ける"
-          },
-          {
-            "category": "generals",
-            "name": "LR張角（ちょうかく）",
-            "displayName": "LR張角（ちょうかく）",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "通常攻撃縮小回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）と一部の不利変化（会心率半減/通常攻撃縮小）を避ける"
           },
           {
             "category": "generals",
@@ -43041,42 +42924,6 @@
           },
           {
             "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "知力低下回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）を避ける"
-          },
-          {
-            "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "攻撃速度低下回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）を避ける"
-          },
-          {
-            "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "会心率半減回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）と一部の不利変化（会心率半減/通常攻撃縮小）を避ける"
-          },
-          {
-            "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "通常攻撃縮小回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）と一部の不利変化（会心率半減/通常攻撃縮小）を避ける"
-          },
-          {
-            "category": "skills",
             "name": "電断",
             "displayName": "電断",
             "source": "related_link_index",
@@ -44771,42 +44618,6 @@
           },
           {
             "category": "equipments",
-            "name": "太平辟邪霊符",
-            "displayName": "太平辟邪霊符",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "知力低下回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）を避ける"
-          },
-          {
-            "category": "equipments",
-            "name": "太平辟邪霊符",
-            "displayName": "太平辟邪霊符",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "攻撃速度低下回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）を避ける"
-          },
-          {
-            "category": "equipments",
-            "name": "太平辟邪霊符",
-            "displayName": "太平辟邪霊符",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "会心率半減回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）と一部の不利変化（会心率半減/通常攻撃縮小）を避ける"
-          },
-          {
-            "category": "equipments",
-            "name": "太平辟邪霊符",
-            "displayName": "太平辟邪霊符",
-            "source": "related_link_index",
-            "sourcePartType": "self-countermeasure-skill",
-            "statusEffectName": "通常攻撃縮小回避[天雷]",
-            "matchedText": "自身1部隊にかかる一部の能力弱化効果（知力/攻撃速度）と一部の不利変化（会心率半減/通常攻撃縮小）を避ける"
-          },
-          {
-            "category": "equipments",
             "name": "大志冠世剣",
             "displayName": "大志冠世剣",
             "source": "related_link_index",
@@ -45746,16 +45557,16 @@
       },
       "sourceRefs": [],
       "ownerCounts": {
-        "generals": 505,
+        "generals": 501,
         "tactics": 145,
-        "skills": 391,
-        "equipments": 186,
+        "skills": 387,
+        "equipments": 182,
         "statusEffects": 0
       },
-      "totalOwnerCount": 1227,
+      "totalOwnerCount": 1215,
       "source": "related_link_index",
-      "ownerRelationCount": 1227,
-      "distinctOwnerCount": 420
+      "ownerRelationCount": 1215,
+      "distinctOwnerCount": 418
     },
     {
       "groupKey": "enemyAbilityDebuff",
@@ -46969,15 +46780,6 @@
             "sourcePartType": "semantic-owner-parameter",
             "statusEffectName": "対物特効変化(弱化)",
             "matchedText": "対物特効低下の効果量+20%"
-          },
-          {
-            "category": "generals",
-            "name": "UR司馬懿（しばい）",
-            "displayName": "UR司馬懿（しばい）",
-            "source": "related_link_index",
-            "sourcePartType": "semantic-owner-parameter",
-            "statusEffectName": "被ダメージ変化(弱化)",
-            "matchedText": "被ダメージを、敵部隊に発生している弱化効果の数×1.5%"
           },
           {
             "category": "generals",
@@ -51722,15 +51524,6 @@
             "name": "天雷",
             "displayName": "天雷",
             "source": "related_link_index",
-            "sourcePartType": "semantic-owner-status",
-            "statusEffectName": "会心率半減",
-            "matchedText": "会心率半減"
-          },
-          {
-            "category": "skills",
-            "name": "天雷",
-            "displayName": "天雷",
-            "source": "related_link_index",
             "sourcePartType": "semantic-owner-status-grant",
             "statusEffectName": "感電",
             "matchedText": "感電"
@@ -52182,15 +51975,15 @@
       },
       "sourceRefs": [],
       "ownerCounts": {
-        "generals": 425,
+        "generals": 424,
         "tactics": 145,
-        "skills": 142,
+        "skills": 141,
         "equipments": 0,
         "statusEffects": 0
       },
-      "totalOwnerCount": 712,
+      "totalOwnerCount": 710,
       "source": "related_link_index",
-      "ownerRelationCount": 712,
+      "ownerRelationCount": 710,
       "distinctOwnerCount": 418
     },
     {
