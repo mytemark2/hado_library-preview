@@ -1,4 +1,4 @@
-# Manual deploy trigger: Update09.5.35
+# Preview deploy triggers include synced app assets.
 name: Deploy Hado Library Preview
 
 on:
@@ -17,6 +17,14 @@ on:
       - main
     paths:
       - ".github/workflows/deploy-preview.yml"
+      - "index.html"
+      - "HADO_DEV_INFO.json"
+      - "RELEASE_MANIFEST.json"
+      - "PREVIEW_SOURCE*.txt"
+      - ".nojekyll"
+      - "hadou_*.json"
+      - "hado_*.js"
+      - "hado_*.css"
 
 permissions:
   contents: read
@@ -79,6 +87,7 @@ jobs:
           cp app/index.html site/index.html
           find app -maxdepth 1 -type f -name 'hadou_*.json' -exec cp {} site/ \;
           find app -maxdepth 1 -type f -name 'hado_*.js' -exec cp {} site/ \;
+          find app -maxdepth 1 -type f -name 'hado_*.css' -exec cp {} site/ \;
           if [ -f app/RELEASE_MANIFEST.json ]; then cp app/RELEASE_MANIFEST.json site/; fi
 
           DEV_LABEL="development preview"
@@ -135,6 +144,7 @@ jobs:
           printf '%s\n' "Preview label: ${DEV_LABEL}" >> site/PREVIEW_SOURCE.txt
           printf '%s\n' "Generated at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> site/PREVIEW_SOURCE.txt
           test -f site/index.html
+          test -f site/hado_styles.css
           test "$(find site -maxdepth 1 -type f -name 'hadou_*.json' | wc -l)" -gt 0
           test "$(find site -maxdepth 1 -type f -name 'hado_*.js' | wc -l)" -gt 0
           grep -q 'hadoPreviewBanner' site/index.html
