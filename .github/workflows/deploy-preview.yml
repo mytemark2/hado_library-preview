@@ -106,17 +106,21 @@ jobs:
           find app -maxdepth 1 -type f -name 'hado_*.css' -exec cp {} site/ \;
           if [ -f app/RELEASE_MANIFEST.json ]; then cp app/RELEASE_MANIFEST.json site/; fi
 
-          DEV_LABEL="development preview"
+          DEV_LABEL="$(python - <<'PY'
+          import re
+          from pathlib import Path
+          source = Path('app/hado_version.js').read_text(encoding='utf-8')
+          release = re.search(r"releaseVersion:\s*'([^']+)'", source)
+          update = re.search(r"updateNo:\s*'([^']+)'", source)
+          if not release or not update:
+              raise SystemExit('releaseVersion/updateNo not found in app/hado_version.js')
+          print(f"{release.group(1)} Update{update.group(1)}")
+          PY
+          )"
           if [ -f app/HADO_DEV_INFO.json ]; then
             cp app/HADO_DEV_INFO.json site/HADO_DEV_INFO.json
-            DEV_LABEL="$(python - <<'PY'
-          import json
-          with open('app/HADO_DEV_INFO.json', encoding='utf-8') as f:
-              data=json.load(f)
-          print(data.get('displayVersion') or 'development preview')
-          PY
-            )"
           fi
+          export DEV_LABEL
 
           SOURCE_COMMIT="$(git -C app rev-parse HEAD)"
           printf '%s\n' "${SOURCE_COMMIT}" > site/PREVIEW_SOURCE_COMMIT.txt
@@ -127,14 +131,11 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import html
-          import json
+          import os
           import re
           p=Path('site/index.html')
           s=p.read_text(encoding='utf-8')
-          label='development preview'
-          info=Path('app/HADO_DEV_INFO.json')
-          if info.exists():
-              label=json.loads(info.read_text(encoding='utf-8')).get('displayVersion') or label
+          label=os.environ['DEV_LABEL']
           safe=html.escape(label)
           style='''<style id="hado-preview-style">#hadoPreviewBanner{position:sticky;top:0;z-index:999999;background:#7c2d12;color:#fff;padding:8px 12px;font-weight:700;text-align:center;letter-spacing:.02em;box-shadow:0 2px 6px rgba(0,0,0,.18)}</style>'''
           banner=f'<div id="hadoPreviewBanner">Preview: {safe}</div>'
