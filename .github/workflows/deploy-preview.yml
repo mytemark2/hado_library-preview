@@ -42,6 +42,22 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout preview deployment config
+        uses: actions/checkout@v4
+        with:
+          path: preview-repo
+
+      - name: Verify single Pages deployment workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t pages_workflows < <(grep -rl --include='*.yml' --include='*.yaml' 'actions/deploy-pages@' preview-repo/.github/workflows | sort)
+          printf 'Pages deployment workflows:\n%s\n' "${pages_workflows[*]:-none}"
+          if [ "${#pages_workflows[@]}" -ne 1 ] || [ "${pages_workflows[0]}" != "preview-repo/.github/workflows/deploy-preview.yml" ]; then
+            echo "Exactly one Pages deployment workflow is allowed: .github/workflows/deploy-preview.yml" >&2
+            exit 1
+          fi
+
       - name: Resolve preview source branch
         id: source
         shell: bash
@@ -102,6 +118,12 @@ jobs:
             )"
           fi
 
+          SOURCE_COMMIT="$(git -C app rev-parse HEAD)"
+          printf '%s\n' "${SOURCE_COMMIT}" > site/PREVIEW_SOURCE_COMMIT.txt
+          printf '%s\n' "${APP_REF}" > site/PREVIEW_SOURCE_BRANCH.txt
+          printf '%s\n' "${DEV_LABEL}" > site/PREVIEW_DISPLAY_VERSION.txt
+          touch site/.nojekyll
+
           python - <<'PY'
           from pathlib import Path
           import html
@@ -145,6 +167,12 @@ jobs:
           printf '%s\n' "Generated at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> site/PREVIEW_SOURCE.txt
           test -f site/index.html
           test -f site/hado_styles.css
+          test -s site/PREVIEW_SOURCE_COMMIT.txt
+          test -s site/PREVIEW_SOURCE_BRANCH.txt
+          test -s site/PREVIEW_DISPLAY_VERSION.txt
+          test "$(cat site/PREVIEW_SOURCE_COMMIT.txt)" = "$(git -C app rev-parse HEAD)"
+          test "$(cat site/PREVIEW_SOURCE_BRANCH.txt)" = "${APP_REF}"
+          test "$(cat site/PREVIEW_DISPLAY_VERSION.txt)" = "${DEV_LABEL}"
           test "$(find site -maxdepth 1 -type f -name 'hadou_*.json' | wc -l)" -gt 0
           test "$(find site -maxdepth 1 -type f -name 'hado_*.js' | wc -l)" -gt 0
           grep -q 'hadoPreviewBanner' site/index.html
