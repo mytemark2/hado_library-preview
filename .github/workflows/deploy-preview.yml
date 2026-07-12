@@ -137,8 +137,8 @@ jobs:
           s=p.read_text(encoding='utf-8')
           label=os.environ['DEV_LABEL']
           safe=html.escape(label)
-          style='''<style id="hado-preview-style">#hadoPreviewBanner{position:sticky;top:0;z-index:999999;background:#7c2d12;color:#fff;padding:8px 12px;font-weight:700;text-align:center;letter-spacing:.02em;box-shadow:0 2px 6px rgba(0,0,0,.18)}</style>'''
-          banner=f'<div id="hadoPreviewBanner">Preview: {safe}</div>'
+          style='''<style id="hado-preview-style">#hadoPreviewBanner{position:relative;z-index:1;background:#7c2d12;color:#fff;padding:6px 12px;font-weight:700;text-align:center;letter-spacing:.02em;box-shadow:0 1px 3px rgba(0,0,0,.16)}#hadoPreviewBanner[hidden]{display:none}</style>'''
+          banner=f'''<div id="hadoPreviewBanner" role="status">Preview: {safe}</div><script id="hado-preview-banner-script">(()=>{{const banner=document.getElementById('hadoPreviewBanner');if(!banner)return;let observer=null;let frame=0;const hide=()=>{{banner.hidden=true;banner.setAttribute('aria-hidden','true');if(observer)observer.disconnect();if(frame)cancelAnimationFrame(frame)}};const loaded=()=>{{const status=document.getElementById('dataFileStatusText');return /(?:公開JSONを自動読込済|JSON読込済)/.test(status?.textContent||'')}};const watch=()=>{{const status=document.getElementById('dataFileStatusText');if(!status){{frame=requestAnimationFrame(watch);return}}if(loaded()){{hide();return}}observer=new MutationObserver(()=>{{if(loaded())hide()}});observer.observe(status,{{childList:true,characterData:true,subtree:true}})}};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch,{{once:true}});else watch();setTimeout(hide,120000)}})();</script>'''
           if '</head>' in s and 'hado-preview-style' not in s:
               s=s.replace('</head>', style+'</head>', 1)
           if '<body' in s and '<div id="hadoPreviewBanner"' not in s:
@@ -177,6 +177,12 @@ jobs:
           test "$(find site -maxdepth 1 -type f -name 'hadou_*.json' | wc -l)" -gt 0
           test "$(find site -maxdepth 1 -type f -name 'hado_*.js' | wc -l)" -gt 0
           grep -q '<div id="hadoPreviewBanner"' site/index.html
+          grep -q 'id="hado-preview-banner-script"' site/index.html
+          grep -q 'dataFileStatusText' site/index.html
+          if grep -q '#hadoPreviewBanner{position:sticky' site/index.html; then
+            echo "Preview banner must not cover the application header." >&2
+            exit 1
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
