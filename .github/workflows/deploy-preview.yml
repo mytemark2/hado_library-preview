@@ -141,7 +141,7 @@ jobs:
           banner=f'<div id="hadoPreviewBanner">Preview: {safe}</div>'
           if '</head>' in s and 'hado-preview-style' not in s:
               s=s.replace('</head>', style+'</head>', 1)
-          if '<body' in s and 'hadoPreviewBanner' not in s:
+          if '<body' in s and '<div id="hadoPreviewBanner"' not in s:
               pos=s.find('>', s.find('<body'))+1
               s=s[:pos]+banner+s[pos:]
           if '<title>' in s:
@@ -176,7 +176,7 @@ jobs:
           test "$(cat site/PREVIEW_DISPLAY_VERSION.txt)" = "${DEV_LABEL}"
           test "$(find site -maxdepth 1 -type f -name 'hadou_*.json' | wc -l)" -gt 0
           test "$(find site -maxdepth 1 -type f -name 'hado_*.js' | wc -l)" -gt 0
-          grep -q 'hadoPreviewBanner' site/index.html
+          grep -q '<div id="hadoPreviewBanner"' site/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
