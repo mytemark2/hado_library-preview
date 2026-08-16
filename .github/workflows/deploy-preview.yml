@@ -70,6 +70,8 @@ jobs:
             APP_REF="${DISPATCH_APP_REF}"
           elif [ -n "${INPUT_APP_REF}" ]; then
             APP_REF="${INPUT_APP_REF}"
+          elif [ -s preview-repo/PREVIEW_SOURCE_BRANCH.txt ]; then
+            APP_REF="$(tr -d '\r\n' < preview-repo/PREVIEW_SOURCE_BRANCH.txt)"
           else
             APP_REF="$(
               git ls-remote --heads https://github.com/mytemark2/hado_library.git 'refs/heads/feature/app-*' \
@@ -81,6 +83,10 @@ jobs:
             )"
           fi
           test -n "${APP_REF}"
+          if ! [[ "${APP_REF}" =~ ^feature/app-[0-9]+(\.[0-9]+){3}$ ]]; then
+            echo "Preview source branch is invalid: ${APP_REF}" >&2
+            exit 1
+          fi
           git ls-remote --exit-code --heads https://github.com/mytemark2/hado_library.git "refs/heads/${APP_REF}" >/dev/null
           echo "app_ref=${APP_REF}" >> "${GITHUB_OUTPUT}"
           echo "Resolved preview source: ${APP_REF}"
