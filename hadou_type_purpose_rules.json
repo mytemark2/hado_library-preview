@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generatedAt": "2026-08-16T08:18:42.068Z",
+  "generatedAt": "2026-08-22T03:37:29.251Z",
   "dataSetId": "2026-08-13T06:28:33.208Z",
   "generator": "hado_crawler_extension",
   "sourceFiles": [
@@ -32,10 +32,10 @@
     "warhorseSkills": "hadou_warhorse_skills.json"
   },
   "sourceCounts": {
-    "generals": 488,
-    "tactics": 467,
-    "equipments": 251,
-    "skills": 661,
+    "generals": 486,
+    "tactics": 465,
+    "equipments": 249,
+    "skills": 653,
     "statusEffects": 206,
     "siegeWeapons": 6,
     "ethnicArmaments": 18,
@@ -46,10 +46,10 @@
     "warhorseSkills": 27
   },
   "sourceHashes": {
-    "generals": "c8a69cf2",
-    "tactics": "17b2d8ff",
-    "equipments": "4c51c466",
-    "skills": "55f06444",
+    "generals": "caa6a018",
+    "tactics": "19b2dc25",
+    "equipments": "504f8c1b",
+    "skills": "c7e8c8f5",
     "statusEffects": "defa110c",
     "formations": "9c5d2dae",
     "siegeWeapons": "5742664a",
@@ -60,10 +60,10 @@
     "warhorseSkills": "fac49238"
   },
   "sourceSha256": {
-    "generals": "c8a69cf2",
-    "tactics": "17b2d8ff",
-    "equipments": "4c51c466",
-    "skills": "55f06444",
+    "generals": "caa6a018",
+    "tactics": "19b2dc25",
+    "equipments": "504f8c1b",
+    "skills": "c7e8c8f5",
     "statusEffects": "defa110c",
     "formations": "9c5d2dae",
     "siegeWeapons": "5742664a",
@@ -73,7 +73,7 @@
     "warhorses": "c5edd890",
     "warhorseSkills": "fac49238"
   },
-  "crawlerVersion": "1.1.0.2",
+  "crawlerVersion": "1.1.0.4",
   "milestone": "crawler-1.1.0.0 / app-3.0.0.0",
   "updateNo": "02.4",
   "status": "vaccine-type-override",

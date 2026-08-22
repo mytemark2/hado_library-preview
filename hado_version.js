@@ -2,13 +2,13 @@
 (() => {
   'use strict';
   const HADO_VERSION = Object.freeze({
-    releaseVersion: '3.0.2.0',
-    updateNo: '',
-    revision: 170,
+    releaseVersion: '3.1.0.0',
+    updateNo: '03',
+    revision: 174,
     formalRelease: false,
-    baseAppVersion: '3.0.1.1',
-    summary: '3.0.2.0: add per-status-effect tags and require explicit candidate selection consistently on PC and smartphone.',
-    updatedAt: '2026-08-14T11:53:07+09:00'
+    baseAppVersion: '3.0.2.0',
+    summary: '3.1.0.0 Update03: generate deterministic EffectClause JSON with full-source audits and evidence traceability.',
+    updatedAt: '2026-08-22T12:35:42+09:00'
   });
   window.HADO_VERSION = HADO_VERSION;
 })();
