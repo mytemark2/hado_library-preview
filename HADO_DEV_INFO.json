@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
-  "releaseStatus": "development",
+  "releaseStatus": "released",
   "versionSource": "hado_version.js",
   "baseAppVersion": "3.0.2.0",
-  "updatedAt": "2026-08-23T08:40:00+09:00"
+  "updatedAt": "2026-08-31T11:00:00+09:00"
 }
