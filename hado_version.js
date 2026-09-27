@@ -2,13 +2,13 @@
 (() => {
   'use strict';
   const HADO_VERSION = Object.freeze({
-    releaseVersion: '3.1.0.0',
+    releaseVersion: '3.1.2.1',
     updateNo: '',
-    revision: 204,
-    formalRelease: true,
-    baseAppVersion: '3.0.2.0',
-    summary: '3.1.0.0 post-release individual status-effect search correction preview.',
-    updatedAt: '2026-09-27T10:19:00+09:00'
+    revision: 209,
+    formalRelease: false,
+    baseAppVersion: '3.1.2.0',
+    summary: 'Corrective release: include max-level referenced-skill effects in individual status searches.',
+    updatedAt: '2026-09-27T00:00:00+09:00'
   });
   window.HADO_VERSION = HADO_VERSION;
 })();
