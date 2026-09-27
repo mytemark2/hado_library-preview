@@ -372,6 +372,37 @@ function buildQuickStatusEffectGroupOwnerRowsFromIndex(filter){
   state.diagnostics.quickStatusEffectGroupFilterCache=safeCloneForDebug(state.quickStatusEffectGroupFilterCacheDiag);
   return {rows,stats,ms,source:index.source,cacheHit:!!index.cacheHit,indexBuildMs:index.buildMs};
 }
+function collectQuickStatusEffectOwnersFromGeneratedIndexForMaxAllData(item,categoryKey,filter){
+  if(!item||!filter||!['status','countermeasure'].includes(norm(filter.kind||'')))return [];
+  if(state.viewMode!=='all'||normalizeGeneralStage(state.generalStage)!=='max')return [];
+  const group=norm(filter.group||'');
+  const target=normalizeQuickStatusEffectTrendLabel(filter.label||filter.statusName||'');
+  if(!group||!target||typeof getDerivedStatusEffectGroupOwnerIndex!=='function')return [];
+  const source=getDerivedStatusEffectGroupOwnerIndex(group);
+  if(!source?.owners)return [];
+  const index=buildQuickStatusEffectGroupOwnerNameIndex({kind:'group',group,label:filter.label||target});
+  const ownerMap=index?.bucket?.[categoryKey];
+  if(!ownerMap)return [];
+  const names=[getItemDisplayName(item),item?.name,item?.title,item?.rawName,item?.raw?.name,item?.raw?.title,item?.raw?.rawName].map(norm).filter(Boolean);
+  let record=null;
+  for(const name of names){if(ownerMap.has(name)){record=ownerMap.get(name);break;}}
+  if(!Array.isArray(record?.hits))return [];
+  return record.hits.filter(hit=>{
+    if(normalizeQuickStatusEffectTrendLabel(hit?.name||'')!==target)return false;
+    const wantedRelation=norm(filter.relationType||'');
+    const hitRelation=norm(hit?.relationType||'');
+    return !wantedRelation||!hitRelation||wantedRelation===hitRelation;
+  }).map(hit=>({...hit,reason:'generated-status-individual-owner-index',groupFilter:group,groupFilterLabel:filter.label||target,groupIndexSource:index.source,groupIndexCacheHit:!!index.cacheHit}));
+}
+function mergeQuickStatusEffectOwnersFromGeneratedIndexForMaxAllData(out,item,categoryKey,filter){
+  collectQuickStatusEffectOwnersFromGeneratedIndexForMaxAllData(item,categoryKey,filter).forEach(hit=>{
+    const target=normalizeQuickStatusEffectTrendLabel(hit.name||'');
+    const relation=norm(hit.relationType||filter?.relationType||'');
+    const duplicate=(out||[]).some(existing=>normalizeQuickStatusEffectTrendLabel(existing?.name||'')===target&&norm(existing?.groupKey||'')===norm(hit.groupKey||'')&&(!relation||!norm(existing?.relationType||'')||norm(existing?.relationType||'')===relation));
+    if(!duplicate)out.push({...hit,relationType:relation});
+  });
+  return out;
+}
 function collectQuickStatusEffectOwnersFromRelatedLinkIndex(item,categoryKey,filter){
   if(!item||!filter)return [];
   if(!['generals','tactics','skills','equipments','statusEffects'].includes(categoryKey))return [];
@@ -398,7 +429,7 @@ function collectQuickStatusEffectOwnersForItem(item,categoryKey,filter,statusEff
   const options=categoryKey==='tactics'?{includeTacticAdditionalEffects:true,suppressDebug:true}:{suppressDebug:true};
   const bucket=getQuickStatusEffectRelationCacheBucket(item);
   const filterKey=[filter?.kind||'',filter?.key||'',filter?.group||'',filter?.label||'',filter?.statusName||'',filter?.relationType||'',getQuickStatusEffectFilterProfileKey(filter,statusEffectNames)].map(norm).join('@@');
-  const rootApi=(typeof window!=='undefined'?window:globalThis);const clauseApi=rootApi.HADO_CLAUSE_SURFACE_BRIDGE||rootApi.HADO_SEARCH_CLAUSE_INTEGRATION;const clauseCacheKey=clauseApi&&typeof clauseApi.getCacheKey==='function'?clauseApi.getCacheKey():'';const stageKey=categoryKey==='equipments'?getEffectiveEquipmentStageForItem(item):'';const cacheKey=`${categoryKey}|${options.includeTacticAdditionalEffects?'withTacticEffects':'default'}|${filterKey}|stage:${stageKey}|view:${state.viewMode||''}|seq:${state.savedSearchCacheSeq||0}|clause:${clauseCacheKey}`;
+  const rootApi=(typeof window!=='undefined'?window:globalThis);const clauseApi=rootApi.HADO_CLAUSE_SURFACE_BRIDGE||rootApi.HADO_SEARCH_CLAUSE_INTEGRATION;const clauseCacheKey=clauseApi&&typeof clauseApi.getCacheKey==='function'?clauseApi.getCacheKey():'';const stageKey=categoryKey==='equipments'?getEffectiveEquipmentStageForItem(item):'';const cacheKey=`${categoryKey}|${options.includeTacticAdditionalEffects?'withTacticEffects':'default'}|${filterKey}|stage:${stageKey}|generalStage:${state.generalStage||''}|view:${state.viewMode||''}|seq:${state.savedSearchCacheSeq||0}|clause:${clauseCacheKey}`;
   if(bucket&&bucket[cacheKey])return bucket[cacheKey];
   const profiles=getQuickStatusEffectFilterProfiles(filter,statusEffectNames);
   const out=[];
@@ -445,6 +476,7 @@ function collectQuickStatusEffectOwnersForItem(item,categoryKey,filter,statusEff
       seen.add(key);
       out.push({name:rel.name,groupKey:rel.groupKey,relationType:rel.relation,reason:'countermeasure-index',targetSide:rel.groupKey==='selfResistanceBuff'?'self':'enemy',sourceText:rel.sourceText,matchedText:rel.sourceText,alias:rel.target||'',direction:''});
     });
+    mergeQuickStatusEffectOwnersFromGeneratedIndexForMaxAllData(out,item,categoryKey,filter);
     if(bucket)bucket[cacheKey]=out;
     return out;
   }
@@ -510,6 +542,7 @@ function collectQuickStatusEffectOwnersForItem(item,categoryKey,filter,statusEff
       out.push(rel);
     }
   }
+  mergeQuickStatusEffectOwnersFromGeneratedIndexForMaxAllData(out,item,categoryKey,filter);
   const canonicalIdentity=new Set(out.filter(hit=>hit?.canonical).map(hit=>[norm(hit.name),norm(hit.groupKey),norm(hit.relationType)].join('@@')));if(canonicalIdentity.size){const preferred=[];const preferredSeen=new Set();out.forEach(hit=>{const key=[norm(hit.name),norm(hit.groupKey),norm(hit.relationType)].join('@@');if(canonicalIdentity.has(key)&&!hit?.canonical)return;if(preferredSeen.has(key)&&hit?.canonical)return;preferredSeen.add(key);preferred.push(hit);});out.splice(0,out.length,...preferred);}
   if(bucket)bucket[cacheKey]=out;
   return out;
@@ -574,7 +607,7 @@ function getQuickOwnerFilterCacheKey(filter){
   if(!filter)return '';
   // カテゴリ・表示範囲・タグ条件をすべてキャッシュ世代へ反映する。
   const tagKey=[...(state.selectedTags||[])].map(norm).filter(Boolean).sort((a,b)=>a.localeCompare(b,'ja')).join('|');
-  return [filter.kind||'',filter.key||'',filter.group||'',filter.label||'',filter.statusName||'',filter.relationType||'',state.viewMode||'',state.equipmentStage||'',state.savedSearchCacheSeq||0,'equipmentSkillStageFilter:v1',[...getQuickOwnerActiveDatasetKeys()].join('|'),tagKey].map(norm).join('@@');
+  return [filter.kind||'',filter.key||'',filter.group||'',filter.label||'',filter.statusName||'',filter.relationType||'',state.viewMode||'',state.generalStage||'',state.equipmentStage||'',state.savedSearchCacheSeq||0,'equipmentSkillStageFilter:v1',[...getQuickOwnerActiveDatasetKeys()].join('|'),tagKey].map(norm).join('@@');
 }
 function runQuickStatusEffectOwnerSearchAsync(filter,options={}){
   if(!filter)return;
@@ -1049,7 +1082,7 @@ function renderSearchResults(){
   // HADO-2.9.0.11: 描画側・開始操作側ともカテゴリを自動ONしない。
   // 全解除・個別カテゴリON/OFFはユーザーの明示操作として保持する。
   const hasActive=Object.values(state.activeCategories).some(Boolean);
-  const datasets=[['generals','武将',state.generals],['tactics','戦法',state.tactics],['skills','技能',state.skills],['equipments','装備',state.equipments],['statusEffects','状態変化',state.statusEffects],['siegeWeapons','兵器',state.siegeWeapons],['ethnicArmaments','武装',state.ethnicArmaments],['formations','陣形',state.formationMasters],['warhorses','名馬',getSearchWarhorseItems()],['warhorseSkills','軍馬技能',state.warhorseSkills],['troopSkills','兵科',state.troopSkills]];
+  const datasets=[['generals','武将',state.generals],['tactics','戦法',state.tactics],['skills','技能',state.skills],['equipments','装備',state.equipments],['statusEffects','状態変化',state.statusEffects],['siegeWeapons','兵器',state.siegeWeapons],['ethnicArmaments','武装',state.ethnicArmaments],['formations','陣形',state.formationMasters],['warhorses','名馬',getSearchWarhorseItems()],['warhorseSkills','軍馬技能',state.warhorseSkills]];
   const uiCategoryState=getCategoryUiState();
   const datasetStats=[];
   const categoryCount={};
@@ -1219,7 +1252,7 @@ function updateCategoryStyles(){const buttons=document.querySelectorAll('[data-c
 function toggleCategory(categoryKey){if(isTypeSearchMode()&&!TYPE_SEARCH_ALLOWED_CATEGORIES.includes(categoryKey))return;const before=safeCloneForDebug(state.activeCategories);const beforeActive=!!state.activeCategories[categoryKey];const start=performance.now();state.activeCategories[categoryKey]=!state.activeCategories[categoryKey];const afterActive=!!state.activeCategories[categoryKey];debugLog('toggleCategory',{categoryKey,before,after:state.activeCategories,quickOwnerActive:!!state.quickStatusEffectOwnerFilter});updateCategoryStyles();if(state.quickStatusEffectOwnerFilter){state._quickOwnerRowsCache=null;runQuickStatusEffectOwnerSearchAsync(state.quickStatusEffectOwnerFilter);}const s=performance.now();renderSearchResults();const searchMs=performance.now()-s;const d=performance.now();renderDetail();const detailMs=performance.now()-d;recordCategoryProfile({categoryKey,beforeActive,afterActive,viewMode:state.viewMode,keyword:currentKeyword(),searchMs:Number(searchMs.toFixed(1)),detailMs:Number(detailMs.toFixed(1)),totalMs:Number((performance.now()-start).toFixed(1))});pushOperationHistory('category');}
 function selectAllCategories(){const before=safeCloneForDebug(state.activeCategories);Object.keys(state.activeCategories).forEach(key=>{state.activeCategories[key]=isTypeSearchMode()?TYPE_SEARCH_ALLOWED_CATEGORIES.includes(key):true;});debugLog('selectAllCategories',{before,after:state.activeCategories,quickOwnerActive:!!state.quickStatusEffectOwnerFilter});updateCategoryStyles();if(state.quickStatusEffectOwnerFilter){state._quickOwnerRowsCache=null;runQuickStatusEffectOwnerSearchAsync(state.quickStatusEffectOwnerFilter);}renderSearchResults();renderDetail();pushOperationHistory('category-select-all');}
 function clearAllCategories(){const before=safeCloneForDebug(state.activeCategories);Object.keys(state.activeCategories).forEach(key=>{state.activeCategories[key]=false;});debugLog('clearAllCategories',{before,after:state.activeCategories,quickOwnerActive:!!state.quickStatusEffectOwnerFilter});updateCategoryStyles();if(state.quickStatusEffectOwnerFilter){state._quickOwnerRowsCache=null;runQuickStatusEffectOwnerSearchAsync(state.quickStatusEffectOwnerFilter);}renderSearchResults();renderDetail();pushOperationHistory('category-clear-all');}
-function setupCategoryButtons(){[['generals','武将'],['tactics','戦法'],['skills','技能'],['equipments','装備'],['statusEffects','状態変化'],['siegeWeapons','兵器'],['ethnicArmaments','武装'],['formations','陣形'],['warhorses','名馬'],['warhorseSkills','軍馬技能'],['troopSkills','兵科']].forEach(([key,label])=>{const btn=document.createElement('button');btn.type='button';btn.dataset.category=key;btn.textContent=label;btn.addEventListener('click',()=>toggleCategory(key));els.categoryBar.appendChild(btn);});if(els.selectAllCategoriesBtn)els.selectAllCategoriesBtn.addEventListener('click',selectAllCategories);if(els.clearAllCategoriesBtn)els.clearAllCategoriesBtn.addEventListener('click',clearAllCategories);updateCategoryStyles();}
+function setupCategoryButtons(){[['generals','武将'],['tactics','戦法'],['skills','技能'],['equipments','装備'],['statusEffects','状態変化'],['siegeWeapons','兵器'],['ethnicArmaments','武装'],['formations','陣形'],['warhorses','名馬'],['warhorseSkills','軍馬技能']].forEach(([key,label])=>{const btn=document.createElement('button');btn.type='button';btn.dataset.category=key;btn.textContent=label;btn.addEventListener('click',()=>toggleCategory(key));els.categoryBar.appendChild(btn);});if(els.selectAllCategoriesBtn)els.selectAllCategoriesBtn.addEventListener('click',selectAllCategories);if(els.clearAllCategoriesBtn)els.clearAllCategoriesBtn.addEventListener('click',clearAllCategories);updateCategoryStyles();}
 function logStartupHelperAvailability(context){const availability={normalizeLoadedStatusEffects:typeof normalizeLoadedStatusEffects==='function',isSearchExcludedSection:typeof isSearchExcludedSection==='function',isSearchExcludedTable:typeof isSearchExcludedTable==='function',stringifyWithoutTextSample:typeof stringifyWithoutTextSample==='function',sanitizeRawForSearch:typeof sanitizeRawForSearch==='function',normalizeSaveItemName:typeof normalizeSaveItemName==='function',sanitizeSaveRecord:typeof sanitizeSaveRecord==='function'};const missing=Object.keys(availability).filter(k=>!availability[k]);debugLog('startup helper availability',{context,missingCount:missing.length,missing,availability,htmlFile:FILE_META.fileName,buildCheck:'2.1-helper-save-normalize-20260428'});return missing;}
 function scheduleSearchCachePrewarm(){
   if(state.viewMode!=='all')return;
